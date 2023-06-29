@@ -8,19 +8,6 @@
   connection: local
   vars_files: ./deployment_vars.yml
   vars:
-    - vlan2: "Management"
-    - vlan6: "VMotion"
-    - vlan7: "Provisioning"
-    - vlan10: "Domain Servers"
-    - vlan15: "Domain Laptops"
-    - vlan20: "Data Analysis"
-    - vlan30: "Host Interrogation"
-    - vlan40: "Host Data Collection"
-    - vlan50: "Network Data Collection"
-    - PA_External: "PA_External"
-    - CP1: "CP1"
-    - CP2: "CP2"
-    - CP3: "CP3"
     - file_source: ./network-gateway.yaml
   roles:
     - generate/host_vars #Required for deployment DO NOT REMOVE

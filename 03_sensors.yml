@@ -1,0 +1,50 @@
+---
+- name: generate variables for deployment
+  hosts: localhost
+  gather_facts: true
+  connection: local
+  become: true
+  ignore_errors: true
+  vars:
+    - file_source: "network-eight.yaml"
+  vars_files: 
+    - ./deployment_vars.yml
+    - /ansible/deployment_vars.yml
+  roles:
+    - generate/securityonion_package #SecurityOnion Sensors
+    - generate/host_vm_address #Required for deployment DO NOT REMOVE
+    - seconion/make_answers  #SecurityOnion Sensors
+    - centos/seconion_iso #SecurityOnion Sensors
+
+
+- name: configure sensors
+  hosts: Sensors
+  gather_facts: true
+  become: true
+  vars:
+    - splunk_install_dir: "/opt/splunkforwarder"
+    - rpm: "{{splunk_ufw_rpm}}"
+  vars_files: 
+    - ./deployment_vars.yml
+    - /ansible/deployment_vars.yml
+  roles:
+    - centos/install_packages
+    - centos/get_so_package
+    - seconion/create_licensefile #SecurityOnion Sensors
+    - seconion/get_answers #SecurityOnion Sensors
+    - seconion/install_so_sensor #SecurityOnion Sensors
+
+- name: configure splunk universal forwarders
+  hosts: Sensors
+  gather_facts: true
+  become: true
+  vars:
+    - splunk_install_dir: "/opt/splunkforwarder"
+    - rpm: "{{splunk_ufw_rpm}}"
+  vars_files: 
+    - ./deployment_vars.yml
+    - /ansible/deployment_vars.yml
+  roles:
+    - splunk/configure_universal_forwarder_prereqs #Splunk UFW
+    - splunk/wget_splunk_rpm #Splunk UFW
+    - splunk/configure_universal_forwarder #Splunk UFW

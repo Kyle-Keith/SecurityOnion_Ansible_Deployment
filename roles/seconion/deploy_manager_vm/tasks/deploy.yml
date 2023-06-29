@@ -1,0 +1,39 @@
+---
+- name: Configure seconion-managernode Virtual Machine Resources
+  vmware_guest:
+    hostname: "{{VCSA.IP}}"
+    username: "{{VCSA.Username}}"
+    password: "{{ DMSS_Pass}}"
+    validate_certs: False
+    guest_id: "centos7_64Guest"
+    name: SOManager
+      #esxi_hostname: "{{SOManager.loc}}"
+    cluster: "DMSS"
+    datacenter: "{{ TeamKitNum }}"
+    datastore: "{{ item.datastore}}"
+    folder: /
+    state: poweredon
+    disk:
+      - size_gb: "{{ SOManager.Storage}}"
+        type: "thin"
+        datastore: "{{item.datastore}}"
+    hardware:
+      memory_mb: "{{SOManager.Mem}}"
+      num_cpus: "{{SOManager.CPU}}"
+      boot_firmware: "efi"
+      hotadd_cpu: True
+      hotremove_cpu: True
+      hotadd_memory: False
+    cdrom:
+      type: iso
+      iso_path: "[{{item.datastore}}] SOManager.iso"
+      state: present
+    networks:
+      - name: "Network Data Collection"
+        type: static
+        device_type: "vmxnet3"
+        start_connected: true
+    wait_for_ip_address: no
+  delegate_to: localhost
+
+

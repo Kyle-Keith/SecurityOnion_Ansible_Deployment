@@ -1,0 +1,14 @@
+--- 
+- name: copy iso's to data stores
+  community.vmware.vsphere_copy:
+    hostname: "{{VCSA.IP}}"
+    username: "{{VCSA.Username}}"
+    password: "{{ DMSS_Pass}}"
+    validate_certs: False
+    src: /ansible/files/seconion/SOManager.iso
+    datacenter: "{{TeamKitNum}}"
+    datastore: "{{item.datastore}}"
+    path: SOManager.iso
+  delegate_to: localhost
+  retries: 4
+  delay: 60

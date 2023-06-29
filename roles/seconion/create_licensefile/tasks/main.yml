@@ -1,0 +1,20 @@
+---
+- name: Wait for SO to come back online after reboot
+  wait_for:
+    host: "{{ Splunk_Manager.IP }}"
+    port: 22
+    timeout: 1200
+    delay: 10
+
+- name: create elastic stack license directory
+  shell: 'sudo mkdir -p /opt/so/state'
+  become: True
+
+- name: Create Elastic Stack license file
+  file:
+    state: touch
+    path: /opt/so/state/yeselastic.txt
+    mode: '644'
+    owner: "{{so_default_user}}"
+    group: "{{so_default_user}}"
+  become: True

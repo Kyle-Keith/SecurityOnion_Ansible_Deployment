@@ -1,0 +1,370 @@
+---
+
+- name: Include variables from group_vars/all.yml
+  include_vars:
+    file: group_vars/all.yml
+    name: all_vars
+
+- name: Create list of all servers
+  set_fact:
+    centos_dicts: "{{ centos_dicts|default([]) + [lookup('vars', item)] }}"
+  loop: "{{ Sensor_Nodes.keys() }}"
+
+- name: Mount centos iso and remove default configs
+  shell: |
+    sudo mkdir -p /opt/baremetal/seconion
+    sudo mkdir -p /mnt/seconion
+    sudo mount -o loop -t iso9660 "/ansible/files/isos/{{centos7Iso}}" /mnt/seconion
+    sudo cp -r  /mnt/seconion/* /opt/baremetal/seconion
+    sudo rm -f /opt/baremetal/Packages/*
+    sudo rm -f /opt/baremetal/seconion/isolinux.cfg
+    sudo rm -f /opt/baremetal/seconion/ks.cfg
+
+# - name: Mount centos iso and remove default configs
+#   shell: |
+#     cp /var/www/html/centos/Packages/* /opt/baremetal/seconion/Packages/
+
+
+- name: install rpms
+  shell: |
+    sudo cp  /mnt/seconion/Packages/{{item}}*  /opt/baremetal/seconion/Packages/
+  loop:
+    - ModemManager-glib
+    - NetworkManager
+    - NetworkManager-glib
+    - NetworkManager-tui
+    - acl
+    - aic94xx-firmware
+    - alsa-firmware
+    - alsa-lib
+    - alsa-tools
+    - audit
+    - audit-libs
+    - authconfig
+    - avahi
+    - avahi-autoipd
+    - avahi-libs
+    - basesystem
+    - bash
+    - bind-libs-lite
+    - bind-license
+    - binutils
+    - biosdevname
+    - btrfs-progs
+    - bzip2-libs
+    - ca-certificates
+    - centos-logos
+    - centos-release
+    - chkconfig
+    - coreutils
+    - cpio
+    - cracklib
+    - cracklib-dicts
+    - cronie
+    - cronie-anacron
+    - crontabs
+    - cryptsetup-libs
+    - curl
+    - cyrus-sasl-lib
+    - dbus
+    - dbus-glib
+    - dbus
+    - dbus-python
+    - device-mapper
+    - device-mapper-event
+    - device-mapper-event-libs
+    - device-mapper-libs
+    - device-mapper-persistent-data
+    - dhclient
+    - dhcp-common
+    - dhcp-libs
+    - diffutils
+    - dmidecode
+    - dnsmasq
+    - dracut
+    - dracut-config-rescue
+    - dracut-network
+    - e2fsprogs
+    - e2fsprogs-libs
+    - ebtables
+    - elfutils-libelf
+    - elfutils-libs
+    - ethtool
+    - expat
+    - file
+    - file-libs
+    - filesystem
+    - findutils
+    - fipscheck
+    - fipscheck-lib
+    - firewalld
+    - freetype
+    - fxload
+    - gawk
+    - gdbm
+    - gettext
+    - gettext-libs
+    - glib-networking
+    - glib2
+    - glibc
+    - glibc-common
+    - gmp
+    - gnupg2
+    - gnutls
+    - gobject-introspection
+    - gpgme
+    - grep
+    - groff-base
+    - grub2
+    - grub2-tools
+    - grubby
+    - gsettings-desktop-schemas
+    - gzip
+    - hardlink
+    - hostname
+    - hwdata
+    - info
+    - initscripts
+    - iproute
+    - iprutils
+    - iptables
+    - iputils
+    - irqbalance
+    - ivtv-firmware
+    - iwl100-firmware
+    - iwl1000-firmware
+    - iwl105-firmware
+    - iwl135-firmware
+    - iwl2000-firmware
+    - iwl2030-firmware
+    - iwl3160-firmware
+    - iwl3945-firmware
+    - iwl4965-firmware
+    - iwl5000-firmware
+    - iwl5150-firmware
+    - iwl6000-firmware
+    - iwl6000g2a-firmware
+    - iwl6000g2b-firmware
+    - iwl6050-firmware
+    - iwl7260-firmware
+    - jansson
+    - json-c
+    - kbd
+    - kbd-misc
+    - kernel
+    - kernel-tools
+    - kernel-tools-libs
+    - kexec-tools
+    - keyutils-libs
+    - kmod
+    - kmod-libs
+    - kpartx
+    - krb5-libs
+    - less
+    - libacl
+    - libassuan
+    - libattr
+    - libblkid
+    - libcap
+    - libcap-ng
+    - libcom_err
+    - libcroco
+    - libcurl
+    - libdaemon
+    - libdb
+    - libdb-utils
+    - libdrm
+    - libedit
+    - libestr
+    - libffi
+    - libgcc
+    - libgcrypt
+    - libgomp
+    - libgpg-error
+    - libgudev1
+    - libidn
+    - libmnl
+    - libmodman
+    - libmount
+    - libndp
+    - libnetfilter_conntrack
+    - libnfnetlink
+    - libnl3
+    - libnl3
+    - libpcap
+    - libpciaccess
+    - libpipeline
+    - libproxy
+    - libpwquality
+    - libselinux
+    - libselinux-python
+    - libselinux-utils
+    - libsemanage
+    - libsepol
+    - libsoup
+    - libss
+    - libssh2
+    - libstdc++
+    - libsysfs
+    - libtasn1
+    - libteam
+    - libunistring
+    - libuser
+    - libutempter
+    - libuuid
+    - libverto
+    - libxml2
+    - linux
+    - logrotate
+    - lua
+    - lvm2
+    - lvm2-libs
+    - lzo
+    - make
+    - man-db
+    - mariadb-libs
+    - microcode_ctl
+    - mozjs17
+    - ncurses
+    - ncurses-base
+    - ncurses-libs
+    - nettle
+    - newt
+    - newt-python
+    - nspr
+    - nss
+    - nss-softokn
+    - nss-softokn-freebl
+    - nss-sysinit
+    - nss-tools
+    - nss-util
+    - numactl-libs
+    - openldap
+    - openssh
+    - openssh-clients
+    - openssh-server
+    - openssl
+    - openssl-libs
+    - os-prober
+    - p11-kit
+    - p11-kit-trust
+    - pam
+    - parted
+    - passwd
+    - pciutils-libs
+    - pcre
+    - pinentry
+    - pkgconfig
+    - plymouth
+    - plymouth-core-libs
+    - plymouth-scripts
+    - policycoreutils
+    - polkit
+    - polkit-pkla-compat
+    - popt
+    - postfix
+    - ppp
+    - procps-ng
+    - pth
+    - pygobject3
+    - pygpgme
+    - pyliblzma
+    - python
+    - python-backports
+    - python-backports-ssl_match_hostname
+    - python-configobj
+    - python-decorator
+    - python-iniparse
+    - python-libs
+    - python-pycurl
+    - python-pyudev
+    - python-setuptools
+    - python-slip
+    - python-slip-dbus
+    - python-urlgrabber
+    - pyxattr
+    - qrencode
+    - readline
+    - rootfiles
+    - rpm-4
+    - rpm-build-libs
+    - rpm-libs
+    - rpm-python
+    - rsyslog
+    - sed
+    - selinux-policy
+    - selinux-policy-targeted
+    - setup
+    - shadow-utils
+    - shared-mime-info
+    - slang
+    - snappy
+    - sqlite
+    - sudo
+    - systemd
+    - systemd
+    - systemd-sysv
+    - sysvinit-tools
+    - tar
+    - tcp_wrappers-libs
+    - teamd
+    - tuned
+    - tzdata
+    - ustr
+    - util-linux
+    - vim-minimal
+    - virt-what
+    - which
+    - wpa_supplicant
+    - xfsprogs
+    - xz
+    - xz-libs
+    - yum
+    - yum-metadata-parser
+    - yum-plugin-fastestmirror
+    - zlib
+
+- name: pause
+  pause:
+    seconds: 30
+
+- name: Unmount iso
+  shell: |
+    sudo umount -f /mnt/seconion
+  become: true
+
+- name: copy new isolinux.cfg iso
+  template:
+    src: "./so_isolinux.cfg"
+    dest: "/opt/baremetal/seconion/isolinux/isolinux.cfg"
+
+- name: copy new isolinux.cfg iso for EFI
+  template:
+    src: "./so_isolinux.cfg"
+    dest: "/opt/baremetal/seconion/EFI/BOOT/isolinux.cfg"
+
+- name: copy new grub.cfg iso
+  template:
+    src: "./grub.cfg"
+    dest: "/opt/baremetal/seconion/isolinux/grub.cfg"
+
+- name: copy new grub.cfg iso for EFI
+  template:
+    src: "./grub.cfg"
+    dest: "/opt/baremetal/seconion/EFI/BOOT/grub.cfg"
+
+- name: create SO ISO
+  include_tasks: ./iso-gen.yml
+  loop: "{{ centos_dicts }}"
+  
+- name: Wait for SO to come back online after reboot
+  wait_for:
+    host: "{{ item.server.IP }}"
+    port: 22
+  loop: "{{ centos_dicts }}"
+  retries: 50
+  delay: 10
+
+- name: remove SO ISO directory
+  shell: |
+    sudo rm -rf /opt/baremetal/*

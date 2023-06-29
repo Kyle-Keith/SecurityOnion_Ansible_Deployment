@@ -1,0 +1,31 @@
+# vars
+# kickstart_dir
+# ks
+---
+# - name: Configure DHCP
+#   template:
+#     src: dhcpd.conf.j2
+#     dest: /etc/dhcp/dhcpd.conf
+#   when: not server_macs_exists
+
+# - name: Ensure ISC DHCP server is restarted
+#   become: true
+#   service:
+#     name: isc-dhcp-server
+#     state: restarted 
+#   when: not server_macs_exists
+
+- name: template  server kickstart 
+  become: true
+  template:
+    src: ./sensor.cfg
+    dest: '/var/www/html/so_ks/ks.cfg'
+  when: not server_macs_exists
+  
+- name: restart server with pxe boot option
+  shell: "cat /ansible/files/boot | sudo /ansible/SMCIPMITool/SMCIPMITool {{ item.IP }} {{IPMI_Username}} {{ IPMI_Pass }} shell"
+
+
+- name: Wait for pxe to restart
+  pause: 
+    minutes: 15

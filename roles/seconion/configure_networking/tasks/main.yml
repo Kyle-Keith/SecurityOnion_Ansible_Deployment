@@ -1,0 +1,36 @@
+---
+- name: Delete IPV6 lines
+  lineinfile:
+    dest: "/etc/sysconfig/network-scripts/ifcfg-{{so_mgr_interface}}"
+    state: absent
+    regexp: '^IPV6INIT=yes'
+    backrefs: yes
+- name: Delete IPV6 line2
+  lineinfile:
+    dest: "/etc/sysconfig/network-scripts/ifcfg-{{so_mgr_interface}}"
+    state: absent
+    regexp: '^IPV6_AUTOCONF=yes'
+    backrefs: yes
+- name: Delete IPV6 line3
+  lineinfile:
+    dest: "/etc/sysconfig/network-scripts/ifcfg-{{so_mgr_interface}}"
+    state: absent
+    regexp: '^IPV6_DEFROUTE=yes'
+    backrefs: yes
+- name: Delete IPV6 line 4
+  lineinfile:
+    dest: "/etc/sysconfig/network-scripts/ifcfg-{{so_mgr_interface}}"
+    state: absent
+    regexp: '^IPV6_FAILURE_FATAL=no'
+    backrefs: yes
+- name: Delete IPV6 Line 5
+  lineinfile:
+    dest: "/etc/sysconfig/network-scripts/ifcfg-{{so_mgr_interface}}"
+    state: absent
+    regexp: '^IPV6_ADDR_GEN_MODE=stable-privacy'
+    backrefs: yes
+
+- name: Unconditionally reboot the machine with all defaults
+  reboot:
+    reboot_timeout: 1800
+  become: True

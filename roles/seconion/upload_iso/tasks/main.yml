@@ -1,0 +1,24 @@
+---
+- name: get second server
+  set_fact:
+    so_dicts: "{{ so_dicts|default([]) + [lookup('vars', item,wantlist=True)] }}"
+  with_items: "{{ Cluster_Servers.keys() }}"
+  when:  Cluster_Servers | length > 2
+
+- name: get first server
+  set_fact:
+    so_dicts: "{{ so_dicts|default([]) + [lookup('vars', item,wantlist=True)] }}"
+  with_items: "{{ Cluster_Servers.keys() | first }}"
+  when: Cluster_Servers | length < Max_Nodes
+
+- name: upload iso
+  include_tasks: upload.yml
+  loop: "{{so_dicts[1] }}"
+  when:  Cluster_Servers | length > 2
+
+- name: upload iso
+  include_tasks: upload.yml
+  loop: "{{so_dicts[0] }}"
+  when:  Cluster_Servers | length < Max_Nodes
+
+

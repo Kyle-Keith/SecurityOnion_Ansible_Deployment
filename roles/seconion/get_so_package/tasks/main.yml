@@ -1,0 +1,24 @@
+---
+- name: download SO Package
+  get_url:
+    url: "http://{{octet}}.8/sensors/SecurityOnion.tgz"
+    dest: /tmp/
+    mode: '0755'
+  become: True
+
+- name: unarchive SO Package
+  unarchive:
+    src: "/tmp/SecurityOnion.tgz"
+    dest: "{{so_install_dir}}"
+    remote_src: yes
+  become: True
+  ignore_errors: True
+
+- name: set perms
+  file:
+    path: "{{so_install_dir}}"
+    state: directory
+    recurse: yes
+    owner: "{{so_default_user}}"
+    group: "{{so_default_user}}"
+  become: yes

@@ -1,0 +1,19 @@
+---
+- name: download answer
+  get_url:
+    url: "http://{{octet}}.8/sensors/{{inventory_hostname}}"
+    dest: "{{so_install_dir}}distributed-airgap-sensor"
+    mode: '0755'
+    owner: "{{so_default_user}}"
+    group: "{{so_default_user}}"
+  become: True
+
+
+- name: copy answer file to dir
+  copy:
+    src: "{{so_install_dir}}distributed-airgap-sensor"
+    dest: "/home/{{so_default_user}}/SecurityOnion/setup/automation/distributed-airgap-sensor"
+    owner: "{{so_default_user}}"
+    group: "{{so_default_user}}"
+    remote_src: yes
+  become: True

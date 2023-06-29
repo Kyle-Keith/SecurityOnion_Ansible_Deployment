@@ -1,0 +1,21 @@
+---
+# req vars
+# ks
+- name: make sure directory exists
+  shell: | 
+    mkdir -p "/var/www/html/sensors"
+  become: true
+
+- name: Include variables from group_vars/all.yml
+  include_vars:
+    file: group_vars/all.yml
+    name: all_vars
+
+- name: Create list of all servers
+  set_fact:
+    sensor_dicts: "{{ sensor_dicts|default([]) + [lookup('vars', item)] }}"
+  loop: "{{ Sensor_Nodes.keys() }}"
+
+- name: Include install sensor
+  include_tasks: answer.yml
+  loop: "{{ sensor_dicts }}"

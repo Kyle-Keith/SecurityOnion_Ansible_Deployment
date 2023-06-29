@@ -1,0 +1,26 @@
+---
+- name: Wait for SO to come back online after reboot
+  wait_for:
+    host: "{{ SOManager.IP }}"
+    port: 22
+  delegate_to: localhost
+  ignore_errors: true
+
+- name: restart vm
+  vmware_guest_powerstate:
+    hostname: '{{VCSA.IP}}'
+    username: '{{VCSA.Username}}'
+    password: '{{DMSS_Pass}}'
+    validate_certs: no
+    name: "{{ SOManager.Name }}"
+    state: restarted
+  delegate_to: localhost
+
+
+- name: Wait for SO to come back online after reboot
+  wait_for:
+    host: "{{ SOManager.IP }}"
+    port: 22
+  delegate_to: localhost
+  retries: 10
+  delay: 30

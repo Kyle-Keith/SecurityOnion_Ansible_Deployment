@@ -1,0 +1,7 @@
+---
+
+- name: template sensor
+  template:
+    src: ./distributed-airgap-sensor.j2
+    dest: "/var/www/html/sensors/{{item.server.Name}}"
+  become: true

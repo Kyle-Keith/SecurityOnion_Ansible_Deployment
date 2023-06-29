@@ -1,0 +1,138 @@
+---
+- name: Include variables from group_vars/all.yml
+  include_vars:
+    file: group_vars/all.yml
+    name: all_vars
+
+- name: Create list of all servers
+  set_fact:
+    centos_dicts: "{{ centos_dicts|default([]) + [lookup('vars', item)] }}"
+  loop: "{{ Sensor_Nodes.keys() }}"
+
+- name: Set fact if server_macs exists
+  set_fact:
+    server_macs_exists: "{{ 'server_macs' in all_vars }}"
+
+- name: Include tasks for MR entries
+  include_tasks: create_dirs.yml
+  with_nested:
+    - "{{ server_macs|dict2items }}"
+    - "{{ centos_dicts }}"
+  loop_control:
+    loop_var: nested_item
+  when: server_macs_exists and  nested_item.0.key.startswith('MR')  
+
+- name: remove dhcp leases
+  file:
+    path: /var/lib/dhcp/dhcpd.leases
+    state: absent
+
+- name: remove old pxelinux file
+  file:
+    path:  /var/lib/tftpboot/pxelinux.cfg
+    state: absent
+  ignore_errors: true
+  become: true
+
+- name: create pxelinux.cfg directory
+  file:
+    path: /var/lib/tftpboot/pxelinux.cfg
+    state: directory
+    owner: tftp
+    group: tftp
+
+- name: copy centos boot files
+  template:
+    src: "{{item}}"
+    dest: /var/lib/tftpboot/pxelinux.cfg/default
+    owner: tftp
+    group: tftp
+    mode: 0777
+  loop:
+    - default
+  become: true  
+
+- name: copy centos grub files
+  template:
+    src: "{{item}}"
+    dest: /var/lib/tftpboot/
+    owner: tftp
+    group: tftp
+    mode: 0777
+  loop:
+    - grub.cfg
+  become: true  
+
+- name: copy so boot files
+  copy:
+    src: "{{item}}"
+    dest: /var/lib/tftpboot/
+    owner: tftp
+    group: tftp
+    mode: 0777
+  loop:
+    - pxelinux.0
+    - menu.c32
+  become: true  
+
+- name: chown all files in tftp
+  shell: |
+    sudo chown -R tftp:tftp /var/lib/tftpboot
+  become: true
+
+- name: Configure TFTP
+  template:
+    src: tftpd-hpa.j2
+    dest: /etc/default/tftpd-hpa
+    owner: root
+    group: root
+  become: true
+
+- name: Ensure tftp hpa server is restarted
+  service:
+    name: tftpd-hpa.service
+    state: restarted
+  become: true
+  ignore_errors: true
+
+- name: copy .treeinfo
+  copy:
+    src: ./.treeinfo
+    dest: /var/www/html/centos
+    owner: root
+    group: root
+  become: true
+
+- name: Configure DHCP
+  template:
+    src: dhcpd.conf.j2
+    dest: /etc/dhcp/dhcpd.conf
+  when: not server_macs_exists
+
+- name: Ensure ISC DHCP server is restarted
+  become: true
+  service:
+    name: isc-dhcp-server
+    state: restarted 
+  when: not server_macs_exists
+
+- name: Create list of all servers
+  set_fact:
+    sensor2_dicts: "{{ sensor2_dicts|default([]) + [lookup('vars', item)] }}"
+  loop: "{{ Sensor_Nodes.keys() }}"
+
+- name: Include install sensors
+  include_tasks: config_pxe.yml
+  loop: "{{ sensor2_dicts }}"
+
+- name: restart server with pxe boot option
+  shell: "echo 'ipmi power reset' | sudo /ansible/SMCIPMITool/SMCIPMITool {{ item.IP }} {{IPMI_Username}} {{ IPMI_Pass }} shell"
+  loop: "{{ sensor2_dicts }}"
+
+- name: Wait for SO to come back online after reboot
+  wait_for:
+    host: "{{ item.server.IP }}"
+    port: 22
+  loop: "{{ sensor2_dicts }}"
+  retries: 50
+  delay: 10

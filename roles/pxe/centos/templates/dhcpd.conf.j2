@@ -1,0 +1,64 @@
+default-lease-time 	300;
+max-lease-time	800;
+
+ddns-update-style none;
+
+authoritative;
+
+ping-check true;
+
+next-server {{octet}}.8;
+
+#option grubmenu code 150 = text;
+
+allow booting;
+allow bootp;
+allow unknown-clients;
+
+option space PXE;
+option PXE.mtftp-ip code 1 = ip-address;
+option PXE.mtftp-cport code 2 = unsigned integer 16;
+option PXE.mtftp-sport code 3 = unsigned integer 16;
+option PXE.mtftp-tmout code 4 = unsigned integer 8;
+option PXE.mtftp-delay code 5 = unsigned integer 8;
+option arch code 93 = unsigned integer 16; # RFC4578
+
+
+subnet {{octet}}.0 netmask 255.255.255.192 {	
+
+
+host PA {
+  hardware ethernet 00:50:56:b7:01:37;
+  fixed-address {{octet}}.2;
+}
+}
+
+subnet {{octet}}.208 netmask 255.255.255.240 {	
+  option routers	{{octet}}.8;
+  option subnet-mask 	255.255.255.240;
+  range {{octet}}.211 {{octet}}.218;
+  option ntp-servers	{{octet}}.8;
+  default-lease-time 	600;
+  max-lease-time	1200;
+
+
+}
+
+
+
+option client-system-arch code 93 = unsigned integer 16;
+class "pxeclients" {
+   match if substring (option vendor-class-identifier, 0, 9) = "PXEClient";
+   next-server {{octet}}.8;
+
+   if option client-system-arch = 00:07 {
+      filename "grubx64.efi"; # for UEFI client
+   } 
+   else {
+      filename "pxelinux.0"; # for legacy client
+   }
+
+option subnet-mask 255.255.255.240;
+option routers {{octet}}.8;
+}
+

@@ -1,6 +1,0 @@
----
-ansible_user: admin
-ansible_ssh_user: admin
-ansible_ssh_pass: '{{ ova_pass }}'
-ansible_become_pass: '{{ ova_pass }}'
-

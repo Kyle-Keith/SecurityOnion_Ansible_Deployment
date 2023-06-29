@@ -14,7 +14,7 @@
     - generate/tftp_server #Required for deployment DO NOT REMOVE
     - generate/dhcp_server #Required for deployment DO NOT REMOVE
     - generate/network_configs #Required for deployment DO NOT REMOVE
-    - generate/seconion_iso  #SecurityOnion ManagerSearch
+    - seconion/iso  #SecurityOnion ManagerSearch
 
 - name: install system and virtual machines
   hosts: localhost

@@ -1,74 +1,40 @@
+#Local Machine Username
+localhost_username: admin
+
+#Local Machine Password
+localhost_password: password
+
 #username for IPMI interface
 IPMI_Username: admin
 
 #What is the IPMI Password?
-IPMI_Pass: "DM55Password!@"
+IPMI_Pass: password
 
 #What is the password going to be for this DMSS Kit?
-DMSS_Pass: "DM55Password!@"
+DMSS_Pass: password
 
-#What is the first 3 octects?(10.1.0) Note, this octet must match the IP scheme of the IPMI interfaces on all of the Servers
+#What are the first 3 octets?(10.1.0) 
 octet: "192.168.86"
 
 #Enter your domain
-TeamKitNum: "T3K2"
+domain: test
 
-#Enter VMware Enterprise License plus for ESXI servers (add a license for each Node)
-license:
-  - xxxxx-xxxxx-xxxxx-xxxxx-xxxxx
-  - xxxxx-xxxxx-xxxxx-xxxxx-xxxxx
-  - xxxxx-xxxxx-xxxxx-xxxxx-xxxxx
-  - xxxxx-xxxxx-xxxxx-xxxxx-xxxxx
-
- #What is the License for vSphere 7? 
-vcenter_license: xxxxx-xxxxx-xxxxx-xxxxx-xxxxx
-
-#number of Cyberpacs; max is 3
+#number of Servers; max is 3
 Nodes: 3
 
 #number of Sensors; max is 6
 Sensors: 6
 
 ##############################################################################################
-#Constant Varables: edit with caution
+#Constant Variables: edit with caution
 #General vars#################################################################################
-
-ova_pass: "ChangeMe135!#%" #default ova password for palo alto and splunk vms
-VM_Store: "VM DataStore"
-vlan2: "Management"
-vlan6: "VMotion"
-vlan7: "Provisioning"
-vlan10: "Domain Services"
-vlan20: "Data Analysis"
-vlan30: "Host Interrogation"
-vlan40: "Host Collection"
-vlan50: "Network Collection"
-PA_External: "PA_External"
-temp_dir: "/ansible/files/templates/"
-
-#vmware vars#####################################
-src_iso_file: "VMware-VMvisor-Installer-7.0U3g-20328353.x86_64.iso"
-esxi_build: "20328353"
-
-#splunk vars#####################################
-splunk_file: "splunk-9.0.4.rpm"
-splunk_ovf: "/ansible/files/splunk/ova/centos_v3.ova"
-splunk_dir: "/ansible/files/splunk/"
-splunk_group: splunk
-splunk_user: splunk
-splunk_install_dir: /opt/splunk
-splunk_ufw_install_dir: /opt/splunkforwarder
-splunk_ufw_rpm: "splunk_ufw-9.0.4.rpm"
-splunk_app_dir: /opt/splunk/apps
-splunk_default_user: xadministrator #Refers to web page administrator
-#Splunk_VM_User: xadministrator #not a variable, just a reference
 
 #SecurityOnion Vars##############################
 onionIso: "securityonion-2.3.250-20230519.iso"
 centos7Iso: "CentOS-7-x86_64-DVD-2009.iso"
-so_install_dir: "/home/xadministrator/"
+so_install_dir: "/tmp/"
 so_default_user: xadministrator
-so_soc_user: xadministrator@onion.com #SecurityOnion SOC user. No captial letters or deployment will fail
+so_soc_user: xadministrator@onion.com #SecurityOnion SOC user. No capital letters or deployment will fail
 so_install_type: MANAGERSEARCH #options are MANAGER OR MANAGERSEARCH for manager vm
 
 #System Settings#################################

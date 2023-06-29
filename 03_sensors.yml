@@ -21,9 +21,6 @@
   hosts: Sensors
   gather_facts: true
   become: true
-  vars:
-    - splunk_install_dir: "/opt/splunkforwarder"
-    - rpm: "{{splunk_ufw_rpm}}"
   vars_files: 
     - ./deployment_vars.yml
     - /ansible/deployment_vars.yml
@@ -33,18 +30,3 @@
     - seconion/create_licensefile #SecurityOnion Sensors
     - seconion/get_answers #SecurityOnion Sensors
     - seconion/install_so_sensor #SecurityOnion Sensors
-
-- name: configure splunk universal forwarders
-  hosts: Sensors
-  gather_facts: true
-  become: true
-  vars:
-    - splunk_install_dir: "/opt/splunkforwarder"
-    - rpm: "{{splunk_ufw_rpm}}"
-  vars_files: 
-    - ./deployment_vars.yml
-    - /ansible/deployment_vars.yml
-  roles:
-    - splunk/configure_universal_forwarder_prereqs #Splunk UFW
-    - splunk/wget_splunk_rpm #Splunk UFW
-    - splunk/configure_universal_forwarder #Splunk UFW

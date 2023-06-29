@@ -1,0 +1,29 @@
+---
+- name: Mount SO and remove default configs
+  shell: |
+    sudo mkdir -p /opt/baremetal/seconion
+    sudo mkdir -p /mnt/seconion
+    sudo mount -o loop -t iso9660 "/ansible/files/isos/{{onionIso}}" /mnt/seconion
+    sudo cp -r /mnt/seconion/* /opt/baremetal/seconion
+    sudo rm -f /opt/baremetal/seconion/isolinux.cfg
+    sudo rm -f /opt/baremetal/seconion/ks.cfg
+    umount /mnt/seconion
+
+- name: copy new isolinux.cfg iso
+  template:
+    src: "./so_isolinux.cfg"
+    dest: "/opt/baremetal/seconion/isolinux.cfg"
+
+- name: copy new isolinux.cfg iso for EFI
+  template:
+    src: "./so_isolinux.cfg"
+    dest: "/opt/baremetal/seconion/EFI/BOOT/isolinux.cfg"
+
+- name: create SO Manager ISO
+  include_tasks: ./iso-gen.yml
+  loop:
+    - SOManager
+
+- name: remove SO ISO directory
+  shell: |
+    sudo rm -rf /opt/baremetal/*

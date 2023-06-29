@@ -35,7 +35,7 @@ centos7Iso: "CentOS-7-x86_64-DVD-2009.iso"
 so_install_dir: "/tmp/"
 so_default_user: xadministrator
 so_soc_user: xadministrator@onion.com #SecurityOnion SOC user. No capital letters or deployment will fail
-so_install_type: MANAGERSEARCH #options are MANAGER OR MANAGERSEARCH for manager vm
+so_install_type: MANAGERSEARCH #options are MANAGER, MANAGERSEARCH for manager vm.
 
 #System Settings#################################
 Max_Nodes: 3 #any change to a value greater than 3 will require adjustments to the roles/generate/varaibles/templates/secrets.yml file

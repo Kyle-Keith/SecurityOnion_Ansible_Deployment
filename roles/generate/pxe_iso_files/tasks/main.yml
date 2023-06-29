@@ -35,14 +35,3 @@
     sudo rm -rf /mnt/seconion
   become: true
 
-- name: Mounting source directory from official production ESXi ISO . . . copying over build files . . . backing up defaults . . .
-  shell: |
-    umount /mnt/esxi
-    sudo mkdir -p /var/lib/tftpboot/ESXI_7U3
-    sudo rm -rf /var/lib/tftpboot/ESXI_7U3/*
-    mkdir /mnt/esxi
-    mount -o loop -t iso9660 /ansible/files/isos/{{ src_iso_file }} /mnt/esxi
-    cp -r /mnt/esxi/* /var/lib/tftpboot/ESXI_7U3/
-    umount /mnt/esxi
-    rm -rf /mnt/esxi
-  become: true

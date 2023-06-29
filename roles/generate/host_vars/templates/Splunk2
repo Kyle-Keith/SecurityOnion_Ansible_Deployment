@@ -1,8 +1,0 @@
----
-ansible_user: "{{splunk_default_user}}"
-ansible_ssh_user: "{{splunk_default_user}}"
-ansible_password: '{{ DMSS_Pass }}'
-ansible_become_user: root
-ansible_ssh_pass: '{{ DMSS_Pass }}'
-ansible_become_pass: '{{ DMSS_Pass }}'
-...

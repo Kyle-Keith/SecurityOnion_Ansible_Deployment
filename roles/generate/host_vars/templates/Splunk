@@ -1,0 +1,8 @@
+---
+ansible_ssh_user: root
+ansible_password: '{{ ova_pass }}'
+ansible_become_user: root
+ansible_become_method: sudo
+ansible_ssh_pass: '{{ ova_pass }}'
+ansible_become_pass: '{{ ova_pass }}'
+...

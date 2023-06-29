@@ -1,0 +1,9 @@
+---
+ansible_user: "{{so_default_user}}"
+ansible_become: yes
+ansible_become_method: sudo
+ansible_password: '{{ DMSS_Pass }}'
+ansible_ssh_pass: '{{ DMSS_Pass }}'
+ansible_become_password: '{{ DMSS_Pass }}'
+ansible_become_pass: '{{ DMSS_Pass }}'
+...
